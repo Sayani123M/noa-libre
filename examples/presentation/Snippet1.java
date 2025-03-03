@@ -36,12 +36,10 @@
  */
 import ag.ion.bion.officelayer.application.IOfficeApplication;
 import ag.ion.bion.officelayer.application.OfficeApplicationRuntime;
-
 import ag.ion.bion.officelayer.document.IDocument;
-
+import ag.ion.bion.officelayer.util.OfficeLoader;
 import ag.ion.bion.officelayer.filter.PDFFilter;
-
-import java.util.HashMap;
+//import java.util.HashMap;
 
 /**
  * This code snippet creates an inpress document
@@ -52,25 +50,41 @@ import java.util.HashMap;
  * @date 16.03.2006
  */
 public class Snippet1 {
+	public static void main(String args[]){
+	        OfficeLoader.init();
 	
+	        try {
+	           OfficeLoader.run( new String[]{SnippetCore.class.getName()});
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        }
+	}
+	public static class SnippetCore{
 	public static void main(String args[]) {
-		String officeHome = "C:\\Programme\\OpenOffice.org 2.0"; //define your office home here
+		//String officeHome = "C:\\Programme\\OpenOffice.org 2.0"; //define your office home here
 		String pdfExportPath = "C:\\MyImpressPDF.pdf"; //define your pdf target path
 		
-		HashMap hashMap = new HashMap(2);
+		/**HashMap hashMap = new HashMap(2);
 		hashMap.put(IOfficeApplication.APPLICATION_TYPE_KEY, IOfficeApplication.LOCAL_APPLICATION);
-		hashMap.put(IOfficeApplication.APPLICATION_HOME_KEY, officeHome);
+		hashMap.put(IOfficeApplication.APPLICATION_HOME_KEY, officeHome);*/
 		
 		try {
-			IOfficeApplication application = OfficeApplicationRuntime.getApplication(hashMap);
+			IOfficeApplication application = OfficeApplicationRuntime.getLocalOfficeApplication();
 			application.activate();
 			IDocument document = application.getDocumentService().constructNewHiddenDocument(IDocument.IMPRESS);
+
+			if (document == null) {
+	                    System.err.println("Failed to create Impress document!");
+	                    return;
+	                }
 			document.getPersistenceService().export(pdfExportPath, PDFFilter.FILTER);
 			application.deactivate();
+			application.dispose();
 		}
 		catch(Throwable throwable) {
+			System.err.println("Error: Failed to export PDF!");
 			throwable.printStackTrace();
 		}
 	}
-	
+	}
 }
