@@ -36,9 +36,8 @@
  */
 import ag.ion.bion.officelayer.application.IOfficeApplication;
 import ag.ion.bion.officelayer.application.OfficeApplicationRuntime;
-
 import ag.ion.bion.officelayer.document.IDocument;
-
+import ag.ion.bion.officelayer.util.OfficeLoader;//updated version
 import java.util.HashMap;
 
 /**
@@ -50,17 +49,25 @@ import java.util.HashMap;
  * @date 16.03.2006
  */
 public class Snippet13 {
-	
-	public static void main(String args[]) {		
-		String officeHome = "C:\\Programme\\OpenOffice.org 2.0"; //define your office home here
+	public static void main(String[] args){
+		try{
+			OfficeLoader.init();
+           		OfficeLoader.run( new String[]{Snippet13Core.class.getName()});
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+	public static class Snippet13Core {
+	public Snippet13Core() {		
+		//String officeHome = "C:\\Programme\\OpenOffice.org 2.0"; //define your office home here, outdated
 		String storePath = "C:\\MyDB.odb"; //define your db target path
 		
-		HashMap hashMap = new HashMap(2);
+		/**HashMap hashMap = new HashMap(2);
 		hashMap.put(IOfficeApplication.APPLICATION_TYPE_KEY, IOfficeApplication.LOCAL_APPLICATION);
-		hashMap.put(IOfficeApplication.APPLICATION_HOME_KEY, officeHome);
+		hashMap.put(IOfficeApplication.APPLICATION_HOME_KEY, officeHome);*/
 
 		try {
-			IOfficeApplication application = OfficeApplicationRuntime.getApplication(hashMap);
+			IOfficeApplication application = OfficeApplicationRuntime.getLocalOfficeApplication();
 			application.activate();
 			IDocument document = application.getDocumentService().constructNewHiddenDocument(IDocument.BASE);
 			
@@ -72,5 +79,5 @@ public class Snippet13 {
 			throwable.printStackTrace();
 		}
 	}
-	
+	}
 }
